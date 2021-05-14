@@ -1,0 +1,17 @@
+{
+  "Records": [
+    {
+      "cf": {
+        "response": {
+          "status": 200,
+          "headers": {}
+        },
+        "request": {
+          "method": "GET",
+          "querystring": "w=250&q=1",
+          "uri": "/i m a g e/이 미 지.gif"
+        }
+      }
+    }
+  ]
+}
