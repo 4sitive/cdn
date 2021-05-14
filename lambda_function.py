@@ -16,11 +16,10 @@ def lambda_handler(event: dict, context) -> dict:
         return response
 
     queries = dict(urllib.parse.parse_qsl(request["querystring"]))
-    print(queries)
-    print("width: {}, height: {}, quality: {}, format: {}".format(width, height, quality, format))
+    print("filename: {}, queries: {}".format(filename, queries))
 
     try:
-        object = boto3.client("s3").get_object(Bucket=os.environ["AWS_S3_BUCKET"], Key=urllib.parse.unquote(request["uri"][1:]))
+        object = boto3.client("s3").get_object(Bucket=os.environ["AWS_S3_BUCKET"], Key=urllib.parse.unquote(filename))
     except Exception as e:
         print(e)
         return response

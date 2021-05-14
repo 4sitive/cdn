@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "sharp": "^0.28.2",
+    "mime-types": "^2.1.30"
+  }
+}

@@ -1,4 +1,7 @@
 .env
+node_modules/
+PIL**/
+package-lock.json
 
 HELP.md
 target/
