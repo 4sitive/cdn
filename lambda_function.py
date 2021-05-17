@@ -10,16 +10,16 @@ def lambda_handler(event: dict, context) -> dict:
     record: dict = event["Records"][0]["cf"]
     request: dict = record["request"]
     response: dict = record["response"]
-    filename: str = request["uri"][1:]
+    uri: str = request["uri"]
 
     if int(response["status"]) != 200:
         return response
 
     queries = dict(urllib.parse.parse_qsl(request["querystring"]))
-    print("filename: {}, queries: {}".format(filename, queries))
+    print("uri: {}, queries: {}".format(uri, queries))
 
     try:
-        object = boto3.client("s3").get_object(Bucket=os.environ["AWS_S3_BUCKET"], Key=urllib.parse.unquote(filename))
+        object = boto3.client("s3").get_object(Bucket=os.environ["AWS_S3_BUCKET"], Key=urllib.parse.unquote(uri[1:]))
     except Exception as e:
         print(e)
         return response
@@ -40,8 +40,8 @@ def lambda_handler(event: dict, context) -> dict:
     while quality > 0:
         with io.BytesIO() as output:
             for frame in frames:
-                width = round(abs(int(queries.get("w", frame.width))) * (1 if format == "GIF" else quality / 100))
-                height = round(abs(int(queries.get("h", frame.height))) * (1 if format == "GIF" else quality / 100))
+                width = round(abs(int(queries.get("w", frame.width))) * (quality / 100 if format == "GIF" else 1))
+                height = round(abs(int(queries.get("h", frame.height))) * (quality / 100 if format == "GIF" else 1))
                 frame.thumbnail((width, height), Image.ANTIALIAS)
             print("width: {}, height: {}, quality: {}, format: {}".format(width, height, quality, format))
             ImageOps.exif_transpose(frames[0]).convert('RGBA').save(output, format=format, compress_level=round(100 % quality / 10) + 1, quality=quality, save_all=format == "GIF" and len(frames) > 1, subsampling=0, optimize=True, append_images=frames[1:])

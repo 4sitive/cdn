@@ -7,9 +7,16 @@
           "headers": {}
         },
         "request": {
-          "method": "GET",
+          "method": "PUT",
           "querystring": "w=250&q=1",
-          "uri": "/i m a g e/이 미 지.gif"
+          "uri": "/i m a g e/이 미 지.gif",
+          "headers": {
+            "content-type": [{"key": "Content-Type","value": "text/plain"}],
+            "authorization": [{"key": "Authorization","value": "Basic dXNlcm5hbWU6cGFzc3dvcmQ="}]
+          },
+          "body":{
+            "data": "dGV4dA=="
+          }
         }
       }
     }
