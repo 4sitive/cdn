@@ -1,4 +1,4 @@
-name: main
+name: cdn.4sitive.com - Origin Request 
 on:
   workflow_dispatch:
 jobs:
