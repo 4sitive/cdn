@@ -44,7 +44,7 @@ def lambda_handler(event: dict, context) -> dict:
                 height = round(abs(int(queries.get("h", frame.height))) * (quality / 100 if format == "GIF" else 1))
                 frame.thumbnail((width, height), Image.ANTIALIAS)
             print("width: {}, height: {}, quality: {}, format: {}".format(width, height, quality, format))
-            ImageOps.exif_transpose(frames[0]).convert('RGBA').save(output, format=format, compress_level=round(100 % quality / 10) + 1, quality=quality, save_all=format == "GIF" and len(frames) > 1, subsampling=0, optimize=True, append_images=frames[1:])
+            ImageOps.exif_transpose(frames[0]).convert("RGBA").save(output, format=format, compress_level=round(100 % quality / 10) + 1, quality=quality, save_all=format == "GIF" and len(frames) > 1, subsampling=0, optimize=True, append_images=frames[1:])
             print(output.tell())
             if output.tell() >= 1048576 and quality > 0:
                 quality = quality - 10
@@ -55,6 +55,6 @@ def lambda_handler(event: dict, context) -> dict:
                     response["statusDescription"] = "OK"
                     response["body"] = base64.standard_b64encode(output.getvalue()).decode()
                     response["bodyEncoding"] = "base64"
-                    response["headers"]["content-type"] = [{"key": "Content-Type", "value": mimetypes.guess_type(format+'.'+format)[0]}]
+                    response["headers"]["content-type"] = [{"key": "Content-Type", "value": mimetypes.guess_type(format+"."+format)[0]}]
             break
     return response
