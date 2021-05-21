@@ -38,7 +38,7 @@ def lambda_handler(event: dict, context) -> dict:
         return response
 
     frames = [frame.copy() for frame in ImageSequence.Iterator(image)]
-    format = queries.get("f", image.format).upper()
+    format = "WEBP" if queries.get("f", image.format).upper() == "PNG" else queries.get("f", image.format).upper()
     quality = abs(int(queries.get("q", 100)))
 
     try:
@@ -50,7 +50,7 @@ def lambda_handler(event: dict, context) -> dict:
                     frame.thumbnail((width, height), Image.ANTIALIAS)
                 print("width: {}, height: {}, quality: {}, format: {}".format(width, height, quality, format))
                 ImageOps.exif_transpose(frames[0]).convert("RGB").save(output,
-                                                                       format="JPEG" if format == "PNG" else format,
+                                                                       format=format,
                                                                        quality=quality,
                                                                        save_all=format == "GIF" and len(frames) > 1,
                                                                        subsampling=0,
@@ -66,7 +66,8 @@ def lambda_handler(event: dict, context) -> dict:
                         response["body"] = base64.standard_b64encode(output.getvalue()).decode()
                         response["bodyEncoding"] = "base64"
                         response["headers"]["content-type"] = [
-                            {"key": "Content-Type", "value": mimetypes.guess_type(format + "." + format)[0]}]
+                            {"key": "Content-Type", "value": mimetypes.guess_type(format + "." + format)[0]}
+                        ]
                 break
     except Exception as e:
         print(e)
