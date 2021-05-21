@@ -1,12 +1,15 @@
-from PIL import Image, ImageSequence, ImageOps
-import boto3
-import urllib
-import mimetypes
 import base64
+import boto3
 import io
+import mimetypes
 import os
+import urllib
+
+from PIL import Image, ImageSequence, ImageOps
 
 s3 = boto3.client("s3")
+
+mimetypes.add_type("image/webp", ".webp")
 
 
 def lambda_handler(event: dict, context) -> dict:

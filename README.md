@@ -17,6 +17,7 @@ docker run --rm -it -v "$PWD":/var/task lambci/lambda:build-nodejs12.x bash
 
 ### Amazon S3
 1. cdn.4sitive.com
+2. Bucket Versioning - Enable
 
 ### CloudFront
 1. Origin Domain Name - cdn.4sitive.com.s3.amazonaws.com
