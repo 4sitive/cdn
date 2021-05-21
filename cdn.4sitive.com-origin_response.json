@@ -8,11 +8,8 @@
         },
         "request": {
           "method": "GET",
-          "querystring": "w=250&q=50",
-          "uri": "/t e s t/jpg/1.2mb.jpg",
-          "body":{
-            "data": "dGV4dA=="
-          },
+          "querystring": "",
+          "uri": "/t e s t/png/1.4mb.png",
           "origin":{
             "s3":{
               "customHeaders": {

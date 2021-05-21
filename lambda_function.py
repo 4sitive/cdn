@@ -50,8 +50,7 @@ def lambda_handler(event: dict, context) -> dict:
                     frame.thumbnail((width, height), Image.ANTIALIAS)
                 print("width: {}, height: {}, quality: {}, format: {}".format(width, height, quality, format))
                 ImageOps.exif_transpose(frames[0]).convert("RGB").save(output,
-                                                                       format=format,
-                                                                       compress_level=round(100 % quality / 10) + 1,
+                                                                       format="JPEG" if format == "PNG" else format,
                                                                        quality=quality,
                                                                        save_all=format == "GIF" and len(frames) > 1,
                                                                        subsampling=0,
