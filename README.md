@@ -21,7 +21,7 @@ docker run --rm -it -v "$PWD":/var/task lambci/lambda:build-nodejs12.x bash
 ### CloudFront
 1. Origin Domain Name - cdn.4sitive.com.s3.amazonaws.com
 2. Origin ID - S3-cdn.4sitive.com
-3. Origin Custom Headers - 
+3. Origin Custom Headers - AWS_S3_BUCKET, KEY
 3. Allowed HTTP Methods - GET, HEAD, OPTIONS, PUT, POST, PATCH, DELETE
 4. Cache Policy - Create a new policy (CachingOptimizedForQuery - Query strings[ALL])
 5. Alternate Domain Names(CNAMEs) - cdn.4sitive.com
@@ -69,5 +69,4 @@ aws iam attach-role-policy --role-name ServiceRoleForLambda --policy-arn arn:aws
 
 ### AWS Lambda
 1. Functions - Create function (Change default execution role - Use an existing role)
-2. Functions - Function overview - Configuration - Environment variables (AWS_S3_BUCKET, KEY)
-3. Actions - Deploy to Lambda@Edge
+2. Functions - Actions - Deploy to Lambda@Edge

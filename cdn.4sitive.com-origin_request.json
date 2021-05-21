@@ -18,7 +18,7 @@
             "data": "dGV4dA=="
           },
           "origin":{
-            "custom":{
+            "s3":{
               "customHeaders": [{"key": "AWS_S3_BUCKET","value": "us-east-1"},{"key": "KEY","value": "text/plain"}]
             }
           }

@@ -7,7 +7,7 @@
           "headers": {}
         },
         "request": {
-          "method": "PUT",
+          "method": "GET",
           "querystring": "w=250&q=1",
           "uri": "/i m a g e/이 미 지.gif",
           "headers": {
