@@ -19,7 +19,7 @@ exports.handler = async (event, context, callback) => {
         if (tokenType){
             if(tokenType.toLowerCase().startsWith('bearer')){
                 try {
-                    const decoded = jwt.verify(tokenValue, process.env.KEY)
+                    const decoded = jwt.verify(tokenValue, request.origin.custom.customHeaders['KEY'][0].value)
                     if(decoded && decoded.sub){
                         prefix = decoded.sub
                     }else{
@@ -41,7 +41,7 @@ exports.handler = async (event, context, callback) => {
                 callback(null, {status: '401', statusDescription: 'Unauthorized'})
             }
             try {
-                const result = await S3.upload({Bucket: process.env.AWS_S3_BUCKET, Key: (prefix ? (md5(prefix) + '/') : '') + uri.substring(1).replace(/\+/g, ' '), Body: Buffer.from(request.body.data, 'base64'), ContentType: request.headers['content-type'][0].value}).promise()
+                const result = await S3.upload({Bucket: request.origin.custom.customHeaders['AWS_S3_BUCKET'][0].value, Key: (prefix ? (md5(prefix) + '/') : '') + uri.substring(1).replace(/\+/g, ' '), Body: Buffer.from(request.body.data, 'base64'), ContentType: request.headers['content-type'][0].value}).promise()
                 callback(null, {status: '200', statusDescription: 'OK', headers: {'content-location': [{key: 'Content-Location', value: result.Location.replace(new RegExp('^' + S3.endpoint.href + result.Bucket, 'g'),'')}]}})
             } catch (e) {
                 callback(null, {status: '500', statusDescription: 'Internal Server Error'})
