@@ -22,7 +22,7 @@ def lambda_handler(event: dict, context) -> dict:
     print("uri: {}, queries: {}, name: {}".format(uri, queries, os.environ["AWS_LAMBDA_FUNCTION_NAME"]))
 
     try:
-        object = s3.get_object(Bucket=request.origin.s3.customHeaders["AWS_S3_BUCKET"][0].value,
+        object = s3.get_object(Bucket=request.get("origin").get("s3").get("customHeaders")["aws_s3_bucket"][0]["value"],
                                Key=urllib.parse.unquote(uri[1:]))
     except Exception as e:
         print(e)
@@ -41,31 +41,35 @@ def lambda_handler(event: dict, context) -> dict:
     format = queries.get("f", image.format).upper()
     quality = abs(int(queries.get("q", 100)))
 
-    while quality > 0:
-        with io.BytesIO() as output:
-            for frame in frames:
-                width = round(abs(int(queries.get("w", frame.width))) * (quality / 100 if format == "GIF" else 1))
-                height = round(abs(int(queries.get("h", frame.height))) * (quality / 100 if format == "GIF" else 1))
-                frame.thumbnail((width, height), Image.ANTIALIAS)
-            print("width: {}, height: {}, quality: {}, format: {}".format(width, height, quality, format))
-            ImageOps.exif_transpose(frames[0]).convert("RGBA").save(output,
-                                                                    format=format,
-                                                                    compress_level=round(100 % quality / 10) + 1,
-                                                                    quality=quality,
-                                                                    save_all=format == "GIF" and len(frames) > 1,
-                                                                    subsampling=0, optimize=True,
-                                                                    append_images=frames[1:])
-            print(output.tell())
-            if output.tell() >= 1048576 and quality > 0:
-                quality = quality - 10
-                continue
-            else:
-                if output.tell() < 1048576:
-                    response["status"] = 200
-                    response["statusDescription"] = "OK"
-                    response["body"] = base64.standard_b64encode(output.getvalue()).decode()
-                    response["bodyEncoding"] = "base64"
-                    response["headers"]["content-type"] = [
-                        {"key": "Content-Type", "value": mimetypes.guess_type(format + "." + format)[0]}]
-            break
+    try:
+        while quality > 0:
+            with io.BytesIO() as output:
+                for frame in frames:
+                    width = round(abs(int(queries.get("w", frame.width))) * (quality / 100 if format == "GIF" else 1))
+                    height = round(abs(int(queries.get("h", frame.height))) * (quality / 100 if format == "GIF" else 1))
+                    frame.thumbnail((width, height), Image.ANTIALIAS)
+                print("width: {}, height: {}, quality: {}, format: {}".format(width, height, quality, format))
+                ImageOps.exif_transpose(frames[0]).convert("RGB").save(output,
+                                                                       format=format,
+                                                                       compress_level=round(100 % quality / 10) + 1,
+                                                                       quality=quality,
+                                                                       save_all=format == "GIF" and len(frames) > 1,
+                                                                       subsampling=0,
+                                                                       optimize=True,
+                                                                       append_images=frames[1:])
+                if output.tell() >= 1048576 and quality > 0:
+                    quality = quality - 10
+                    continue
+                else:
+                    if output.tell() < 1048576:
+                        response["status"] = 200
+                        response["statusDescription"] = "OK"
+                        response["body"] = base64.standard_b64encode(output.getvalue()).decode()
+                        response["bodyEncoding"] = "base64"
+                        response["headers"]["content-type"] = [
+                            {"key": "Content-Type", "value": mimetypes.guess_type(format + "." + format)[0]}]
+                break
+    except Exception as e:
+        print(e)
+        return response
     return response

@@ -8,14 +8,17 @@
         },
         "request": {
           "method": "GET",
-          "querystring": "w=250&q=1",
-          "uri": "/i m a g e/이 미 지.gif",
-          "headers": {
-            "content-type": [{"key": "Content-Type","value": "text/plain"}],
-            "authorization": [{"key": "Authorization","value": "Basic dXNlcm5hbWU6cGFzc3dvcmQ="}]
-          },
+          "querystring": "w=250&q=50",
+          "uri": "/t e s t/jpg/1.2mb.jpg",
           "body":{
             "data": "dGV4dA=="
+          },
+          "origin":{
+            "s3":{
+              "customHeaders": {
+                "aws_s3_bucket": [{"key": "AWS_S3_BUCKET","value": "cdn.4sitive.com"}]
+              }
+            }
           }
         }
       }

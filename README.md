@@ -1,13 +1,13 @@
 ###
 1. cdn.4sitive.com - Origin request
 ```
-docker run --rm -v "$PWD":/var/task lambci/lambda:build-python3.8 pip3 install -r requirements.txt --upgrade --target .
-cat cdn.4sitive.com-origin_request.json | docker run --env-file .env --rm -v "$PWD":/var/task:ro,delegated -i -e DOCKER_LAMBDA_USE_STDIN=1 lambci/lambda:python3.8 lambda_function.lambda_handler
+docker run --rm -v "$PWD":/var/task lambci/lambda:build-nodejs12.x npm install --only=prod
+cat cdn.4sitive.com-origin_request.json | docker run --env-file .env --rm -v "$PWD":/var/task:ro,delegated -i -e DOCKER_LAMBDA_USE_STDIN=1 lambci/lambda:nodejs12.x lambda.handler
 ```
 2. cdn.4sitive.com - Origin response
 ```
-docker run --rm -v "$PWD":/var/task lambci/lambda:build-nodejs12.x npm install --only=prod
-cat cdn.4sitive.com-origin_response.json | docker run --env-file .env --rm -v "$PWD":/var/task:ro,delegated -i -e DOCKER_LAMBDA_USE_STDIN=1 lambci/lambda:nodejs12.x lambda.handler
+docker run --rm -v "$PWD":/var/task lambci/lambda:build-python3.8 pip3 install -r requirements.txt --upgrade --target .
+cat cdn.4sitive.com-origin_response.json | docker run --env-file .env --rm -v "$PWD":/var/task:ro,delegated -i -e DOCKER_LAMBDA_USE_STDIN=1 lambci/lambda:python3.8 lambda_function.lambda_handler
 ```
 3.
 ```

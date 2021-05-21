@@ -3,6 +3,7 @@ const querystring = require('querystring')
 const AWS = require('aws-sdk')
 const md5 = require('md5')
 const jwt = require('jsonwebtoken')
+const url = require('url')
 const S3 = new AWS.S3({signatureVersion: 'v4'})
 
 exports.handler = async (event, context, callback) => {
@@ -13,43 +14,45 @@ exports.handler = async (event, context, callback) => {
 
     const token = request.headers.authorization && request.headers.authorization[0].value
     if (request.method === 'PUT' && token) {
-        let prefix
         const [tokenType, tokenValue] = token.split(' ')
         if (tokenType) {
+            let prefix
             if (tokenType.toLowerCase().startsWith('bearer')) {
                 try {
-                    const decoded = jwt.verify(tokenValue, request.origin.s3.customHeaders['KEY'][0].value)
+                    const decoded = jwt.verify(tokenValue, process.env.KEY || request.origin.s3.customHeaders['key'][0].value)
                     if (decoded && decoded.sub) {
                         prefix = decoded.sub
                     } else {
-                        callback(null, {
-                            status: '401',
-                            statusDescription: 'Unauthorized',
-                            headers: {'www-authenticate': [{key: 'WWW-Authenticate', value: 'Bearer'}]}
-                        })
+                        throw new Error('');
                     }
                 } catch (e) {
                     callback(null, {
+                        body: JSON.stringify({'error': e.message}),
                         status: '401',
                         statusDescription: 'Unauthorized',
-                        headers: {'www-authenticate': [{key: 'WWW-Authenticate', value: 'Bearer'}]}
+                        headers: {
+                            'www-authenticate': [{key: 'WWW-Authenticate', value: 'Bearer'}],
+                            'content-type': [{key: 'Content-Type', value: 'application/json'}],
+                            'content-encoding': [{key: 'Content-Encoding', value: 'UTF-8'}]
+                        }
                     })
                 }
             } else if (tokenType.toLowerCase().startsWith('basic')) {
                 try {
                     const [username, password] = Buffer.from(tokenValue, 'base64').toString('ascii').split(':')
-                    if (!username || !password || username !== process.env.USERNAME || password !== process.env.PASSWORD) {
-                        callback(null, {
-                            status: '401',
-                            statusDescription: 'Unauthorized',
-                            headers: {'www-authenticate': [{key: 'WWW-Authenticate', value: 'Basic'}]}
-                        })
+                    if (!username || !password || username !== request.origin.s3.customHeaders['username'][0].value || password !== request.origin.s3.customHeaders['password'][0].value) {
+                        throw new Error('');
                     }
                 } catch (e) {
                     callback(null, {
+                        body: JSON.stringify({'error': e.message}),
                         status: '401',
                         statusDescription: 'Unauthorized',
-                        headers: {'www-authenticate': [{key: 'WWW-Authenticate', value: 'Basic'}]}
+                        headers: {
+                            'www-authenticate': [{key: 'WWW-Authenticate', value: 'Basic'}],
+                            'content-type': [{key: 'Content-Type', value: 'application/json'}],
+                            'content-encoding': [{key: 'Content-Encoding', value: 'UTF-8'}]
+                        }
                     })
                 }
             } else {
@@ -57,7 +60,7 @@ exports.handler = async (event, context, callback) => {
             }
             try {
                 const result = await S3.upload({
-                    Bucket: request.origin.s3.customHeaders['AWS_S3_BUCKET'][0].value,
+                    Bucket: request.origin.s3.customHeaders['aws_s3_bucket'][0].value,
                     Key: (prefix ? (md5(prefix) + '/') : '') + uri.substring(1).replace(/\+/g, ' '),
                     Body: Buffer.from(request.body.data, 'base64'),
                     ContentType: request.headers['content-type'][0].value
@@ -68,12 +71,20 @@ exports.handler = async (event, context, callback) => {
                     headers: {
                         'content-location': [{
                             key: 'Content-Location',
-                            value: result.Location.replace(new RegExp('^' + S3.endpoint.href + result.Bucket, 'g'), '')
+                            value: url.parse(result.Location).pathname.replace(new RegExp('^/' + result.Bucket, 'g'), '')
                         }]
                     }
                 })
             } catch (e) {
-                callback(null, {status: '500', statusDescription: 'Internal Server Error'})
+                callback(null, {
+                    body: JSON.stringify({'error': e.message}),
+                    status: '500',
+                    statusDescription: 'Internal Server Error',
+                    headers: {
+                        'content-type': [{key: 'Content-Type', value: 'application/json'}],
+                        'content-encoding': [{key: 'Content-Encoding', value: 'UTF-8'}]
+                    }
+                })
             }
         }
     }

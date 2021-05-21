@@ -12,14 +12,17 @@
           "uri": "/i m a g e/이 미 지.gif",
           "headers": {
             "content-type": [{"key": "Content-Type","value": "text/plain"}],
-            "authorization": [{"key": "Authorization","value": "Basic dXNlcm5hbWU6cGFzc3dvcmQ="}]
+            "authorization": [{"key": "Authorization","value": "Bearer eyJraWQiOiJzaWciLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNzI0MDUwMTI0IiwiYXVkIjoiNHNpdGl2ZSIsIm5iZiI6MTYyMTU3MzQ3OSwiaXNzIjoiaHR0cHM6XC9cL2FwaS40c2l0aXZlLmNvbSIsImV4cCI6MTYyMTY1OTg3OSwiaWF0IjoxNjIxNTczNDc5LCJqdGkiOiJiMDFmOWEwZS1kNjY3LTQ4YjctOTVhMy01NDE1ODQzZDhiZjUifQ.c-OdNVaz6VY1D8Jv5t8YkPjKk_SfpR2wkpC183efgmU"}]
           },
           "body":{
             "data": "dGV4dA=="
           },
           "origin":{
             "s3":{
-              "customHeaders": [{"key": "AWS_S3_BUCKET","value": "us-east-1"},{"key": "KEY","value": "text/plain"}]
+              "customHeaders": {
+                "key": [{"key": "KEY","value": ""}],
+                "aws_s3_bucket": [{"key": "AWS_S3_BUCKET","value": "cdn.4sitive.com"}]
+              }
             }
           }
         }
