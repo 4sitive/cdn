@@ -21,6 +21,8 @@
             "s3":{
               "customHeaders": {
                 "key": [{"key": "KEY","value": ""}],
+                "username": [{"key": "USERNAME","value": "username"}],
+                "password": [{"key": "PASSWORD","value": "password"}],
                 "aws_s3_bucket": [{"key": "AWS_S3_BUCKET","value": "cdn.4sitive.com"}]
               }
             }
