@@ -8,6 +8,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: lambda zip
         run: |
+          docker run --rm -v "$PWD/origin/request":/var/task lambci/lambda:build-nodejs12.x npm install md5 jsonwebtoken
           docker run --rm -v "$PWD/origin/request":/var/task lambci/lambda:build-nodejs12.x zip -9yr lambda.zip .
       - name: lambda update
         env:
