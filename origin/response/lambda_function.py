@@ -26,7 +26,7 @@ def lambda_handler(event: dict, context) -> dict:
 
     try:
         object = s3.get_object(Bucket=request.get("origin").get("s3").get("customHeaders")["aws_s3_bucket"][0]["value"],
-                               Key=urllib.parse.unquote(uri[1:]))
+                               Key=urllib.parse.unquote_plus(uri[1:]))
     except Exception as e:
         print(e)
         return response

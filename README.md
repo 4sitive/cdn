@@ -1,13 +1,13 @@
 ###
-1. cdn.4sitive.com - Origin request
+1. Origin request
 ```
-docker run --rm -v "$PWD":/var/task lambci/lambda:build-nodejs12.x npm install --only=prod
-cat cdn.4sitive.com-origin_request.json | docker run --env-file .env --rm -v "$PWD":/var/task:ro,delegated -i -e DOCKER_LAMBDA_USE_STDIN=1 lambci/lambda:nodejs12.x lambda.handler
+docker run --rm -v "$PWD":/var/task lambci/lambda:build-nodejs12.x npm install md5 jsonwebtoken --prefix ./opt/nodejs
+cat origin/request/event.json | docker run --env-file .env --rm -v "$PWD/origin/request":/var/task:ro,delegated -v "$PWD/opt":/opt:ro,delegated -i -e DOCKER_LAMBDA_USE_STDIN=1 lambci/lambda:nodejs12.x index.handler
 ```
-2. cdn.4sitive.com - Origin response
+2. Origin response
 ```
-docker run --rm -v "$PWD":/var/task lambci/lambda:build-python3.8 pip3 install -r requirements.txt --upgrade --target .
-cat cdn.4sitive.com-origin_response.json | docker run --env-file .env --rm -v "$PWD":/var/task:ro,delegated -i -e DOCKER_LAMBDA_USE_STDIN=1 lambci/lambda:python3.8 lambda_function.lambda_handler
+docker run --rm -v "$PWD":/var/task lambci/lambda:build-python3.8 pip install Pillow --upgrade --target ./opt/python
+cat origin/response/event.json | docker run --env-file .env --rm -v "$PWD/origin/response":/var/task:ro,delegated -v "$PWD/opt":/opt:ro,delegated -i -e DOCKER_LAMBDA_USE_STDIN=1 lambci/lambda:python3.8 lambda_function.lambda_handler
 ```
 3.
 ```
@@ -22,7 +22,7 @@ docker run --rm -it -v "$PWD":/var/task lambci/lambda:build-nodejs12.x bash
 ### CloudFront
 1. Origin Domain Name - cdn.4sitive.com.s3.amazonaws.com
 2. Origin ID - S3-cdn.4sitive.com
-3. Origin Custom Headers - AWS_S3_BUCKET, KEY
+3. Origin Custom Headers - AWS_S3_BUCKET, KEY, USERNAME, PASSWORD
 3. Allowed HTTP Methods - GET, HEAD, OPTIONS, PUT, POST, PATCH, DELETE
 4. Cache Policy - Create a new policy (CachingOptimizedForQuery - Query strings[ALL])
 5. Alternate Domain Names(CNAMEs) - cdn.4sitive.com
@@ -70,4 +70,6 @@ aws iam attach-role-policy --role-name ServiceRoleForLambda --policy-arn arn:aws
 
 ### AWS Lambda
 1. Functions - Create function (Change default execution role - Use an existing role)
-2. Functions - Actions - Deploy to Lambda@Edge
+2. Functions - Layers - Add a layer - Custom layers
+3. Functions - Actions - Publish new version
+4. Functions - Actions - Deploy to Lambda@Edge

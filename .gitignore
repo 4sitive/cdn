@@ -1,7 +1,5 @@
 .env
-node_modules/
-PIL**/
-package-lock.json
+opt/
 
 HELP.md
 target/

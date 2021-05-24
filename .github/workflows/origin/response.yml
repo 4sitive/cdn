@@ -1,0 +1,20 @@
+name: Origin response
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: lambda zip
+        run: |
+          docker run --rm -v "$PWD/origin/response":/var/task lambci/lambda:build-python3.8 zip -9yr lambda.zip .
+      - name: lambda update
+        env:
+          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          AWS_DEFAULT_REGION: ${{secrets.AWS_DEFAULT_REGION}}
+        run: |
+          docker run --rm -v "$PWD/origin/response/lambda.zip":/var/task/lambda.zip -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY lambci/lambda:build-python3.8 aws lambda update-function-code --function-name cdn_4sitive_com-origin_response --zip-file fileb://lambda.zip
+
+

@@ -9,7 +9,7 @@
         "request": {
           "method": "GET",
           "querystring": "",
-          "uri": "/t e s t/png/1.4mb.png",
+          "uri": "/t+e+s+t/png/1.4mb.png",
           "origin":{
             "s3":{
               "customHeaders": {

@@ -1,0 +1,22 @@
+name: layer
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: layer zip
+        run: |
+          docker run --rm -v "$PWD":/var/task lambci/lambda:build-python3.8 pip install Pillow --upgrade --target ./opt/python
+          docker run --rm -v "$PWD":/var/task lambci/lambda:build-nodejs12.x npm install md5 jsonwebtoken --prefix ./opt/nodejs
+          docker run --rm -v "$PWD/opt":/var/task lambci/lambda:build-provided zip -9yr layer.zip .
+      - name: layer publish
+        env:
+          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          AWS_DEFAULT_REGION: ${{secrets.AWS_DEFAULT_REGION}}
+        run: |
+          docker run --rm -v "$PWD/opt/layer.zip":/var/task/layer.zip -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY lambci/lambda:build-provided aws lambda publish-layer-version --layer-name layer --zip-file fileb://layer.zip --compatible-runtimes python3.8 nodejs12.x
+
+
