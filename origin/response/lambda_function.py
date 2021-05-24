@@ -22,10 +22,10 @@ def lambda_handler(event: dict, context) -> dict:
         return response
 
     queries = dict(urllib.parse.parse_qsl(request["querystring"]))
-    print("uri: {}, queries: {}, name: {}".format(uri, queries, os.environ["AWS_LAMBDA_FUNCTION_NAME"]))
+    print("uri: {}, queries: {}, env: {}".format(uri, queries, os.environ))
 
     try:
-        object = s3.get_object(Bucket=request.get("origin").get("s3").get("customHeaders")["aws_s3_bucket"][0]["value"],
+        object = s3.get_object(Bucket=os.environ["AWS_LAMBDA_FUNCTION_NAME"].split("_").pop().replace("-", "."),
                                Key=urllib.parse.unquote_plus(uri[1:]))
     except Exception as e:
         print(e)

@@ -8,13 +8,11 @@
         },
         "request": {
           "method": "GET",
-          "querystring": "",
+          "querystring": "w=test",
           "uri": "/t+e+s+t/png/1.4mb.png",
           "origin":{
             "s3":{
-              "customHeaders": {
-                "aws_s3_bucket": [{"key": "AWS_S3_BUCKET","value": "cdn.4sitive.com"}]
-              }
+              "customHeaders": {}
             }
           }
         }

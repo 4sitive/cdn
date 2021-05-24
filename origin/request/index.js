@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 const querystring = require('querystring')
 const AWS = require('aws-sdk')
 const md5 = require('md5')
@@ -9,7 +9,7 @@ exports.handler = async (event, context, callback) => {
     const {request, response} = event.Records[0].cf
     const uri = decodeURIComponent(request.uri)
     const queries = querystring.parse(request.querystring)
-    console.log(`uri: ${uri}, queries: ${JSON.stringify(queries)}, name: ${process.env.AWS_LAMBDA_FUNCTION_NAME}`)
+    console.log('uri: %s, queries: %s, env: %O', uri, JSON.stringify(queries), process.env)
 
     const token = request.headers.authorization && request.headers.authorization[0].value
     if (token && (request.method === 'PUT' || request.method === 'DELETE')) {
@@ -20,7 +20,7 @@ exports.handler = async (event, context, callback) => {
                 try {
                     sub = jwt.verify(tokenValue, process.env.KEY || request.origin.s3.customHeaders['key'][0].value).sub
                     if (!sub) {
-                        throw new Error('');
+                        throw new Error('')
                     }
                 } catch (e) {
                     callback(null, {
@@ -38,7 +38,7 @@ exports.handler = async (event, context, callback) => {
                 try {
                     const [username, password] = Buffer.from(tokenValue, 'base64').toString('ascii').split(':')
                     if (!username || !password || username !== (process.env.USERNAME || request.origin.s3.customHeaders['username'][0].value) || password !== (process.env.PASSWORD || request.origin.s3.customHeaders['password'][0].value)) {
-                        throw new Error('');
+                        throw new Error('')
                     }
                 } catch (e) {
                     callback(null, {
@@ -59,7 +59,7 @@ exports.handler = async (event, context, callback) => {
                 if (request.method === 'PUT') {
                     sub = sub && (md5(sub) + '/') || ''
                     await S3.putObject({
-                        Bucket: request.origin.s3.customHeaders['aws_s3_bucket'][0].value,
+                        Bucket: process.env.AWS_LAMBDA_FUNCTION_NAME.split('_').pop().replace(/\-/g, '.'),
                         Key: sub + uri.substring(1).replace(/\+/g, ' '),
                         Body: Buffer.from(request.body.data, 'base64'),
                         ContentType: request.headers['content-type'][0].value
@@ -78,7 +78,7 @@ exports.handler = async (event, context, callback) => {
                 if (request.method === 'DELETE') {
                     if (!sub || (sub && uri.startsWith('/' + md5(sub)))) {
                         await S3.deleteObject({
-                            Bucket: request.origin.s3.customHeaders['aws_s3_bucket'][0].value,
+                            Bucket: process.env.AWS_LAMBDA_FUNCTION_NAME.split('_').pop().replace(/\-/g, '.'),
                             Key: uri.substring(1).replace(/\+/g, ' ')
                         }).promise()
                     }
@@ -101,4 +101,4 @@ exports.handler = async (event, context, callback) => {
         }
     }
     return callback(null, request)
-};
+}
