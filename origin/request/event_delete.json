@@ -1,0 +1,36 @@
+{
+  "Records": [
+    {
+      "cf": {
+        "config": {
+          "distributionId": "EZYREL8JGFXM0"
+        },
+        "request": {
+          "method": "DELETE",
+          "uri": "/test.txt",
+          "headers": {
+            "authorization": [
+              {
+                "key": "Authorization",
+                "value": "Bearer secret"
+              }
+            ]
+          },
+          "origin": {
+            "s3": {
+              "domainName": "cdn.4sitive.com.s3.amazonaws.com",
+              "customHeaders": {
+                "key": [
+                  {
+                    "key": "KEY",
+                    "value": "secret"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

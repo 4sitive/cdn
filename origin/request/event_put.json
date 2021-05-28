@@ -1,0 +1,45 @@
+{
+  "Records": [
+    {
+      "cf": {
+        "config": {
+          "distributionId": "EZYREL8JGFXM0"
+        },
+        "request": {
+          "method": "PUT",
+          "uri": "/test.txt",
+          "headers": {
+            "content-type": [
+              {
+                "key": "Content-Type",
+                "value": "text/plain"
+              }
+            ],
+            "authorization": [
+              {
+                "key": "Authorization",
+                "value": "Bearer secret"
+              }
+            ]
+          },
+          "body": {
+            "data": "dGV4dA=="
+          },
+          "origin": {
+            "s3": {
+              "domainName": "cdn.4sitive.com.s3.amazonaws.com",
+              "customHeaders": {
+                "key": [
+                  {
+                    "key": "KEY",
+                    "value": "secret"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

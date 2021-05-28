@@ -1,0 +1,45 @@
+{
+  "Records": [
+    {
+      "cf": {
+        "config": {
+          "distributionId": "EZYREL8JGFXM0"
+        },
+        "request": {
+          "method": "PUT",
+          "uri": "/test.txt",
+          "headers": {
+            "content-type": [
+              {
+                "key": "Content-Type",
+                "value": "text/plain"
+              }
+            ],
+            "authorization": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzZWNyZXQiLCJpYXQiOjE2MjIxODQ4MjJ9.zkwknpG2OuHU2VXnCcv5pvZe9elfqMxi9EgJQ0MhQiE"
+              }
+            ]
+          },
+          "body": {
+            "data": "dGV4dA=="
+          },
+          "origin": {
+            "s3": {
+              "domainName": "cdn.4sitive.com.s3.amazonaws.com",
+              "customHeaders": {
+                "key": [
+                  {
+                    "key": "KEY",
+                    "value": "secret"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

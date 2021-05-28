@@ -3,6 +3,7 @@ import boto3
 import io
 import mimetypes
 import os
+import re
 import urllib
 
 from PIL import Image, ImageSequence, ImageOps
@@ -13,20 +14,21 @@ mimetypes.add_type("image/webp", ".webp")
 
 
 def lambda_handler(event: dict, context) -> dict:
-    record: dict = event["Records"][0]["cf"]
-    request: dict = record["request"]
-    response: dict = record["response"]
+    cf: dict = event["Records"][0]["cf"]
+    request: dict = cf["request"]
+    response: dict = cf["response"]
     uri: str = request["uri"]
 
     if int(response["status"]) != 200 or request["method"] != "GET":
         return response
 
     queries = dict(urllib.parse.parse_qsl(request["querystring"]))
-    print("uri: {}, queries: {}, env: {}".format(uri, queries, os.environ))
+    print("uri: {}, queries: {}, env: {}, cf: {}".format(uri, queries, os.environ, cf))
 
     try:
-        object = s3.get_object(Bucket=os.environ["AWS_LAMBDA_FUNCTION_NAME"].split("_").pop().replace("-", "."),
-                               Key=urllib.parse.unquote_plus(uri[1:]))
+        object = s3.get_object(
+            Bucket=re.sub(".s3.amazonaws.com$", "", request.get("origin").get("s3").get("domainName")),
+            Key=urllib.parse.unquote_plus(uri[1:]))
     except Exception as e:
         print(e)
         return response
@@ -40,11 +42,10 @@ def lambda_handler(event: dict, context) -> dict:
         print(e)
         return response
 
-    frames = [frame.copy() for frame in ImageSequence.Iterator(image)]
-    format = "WEBP" if queries.get("f", image.format).upper() == "PNG" else queries.get("f", image.format).upper()
-    quality = abs(int(queries.get("q", 100)))
-
     try:
+        frames = [frame.copy() for frame in ImageSequence.Iterator(image)]
+        format = "WEBP" if queries.get("f", image.format).upper() == "PNG" else queries.get("f", image.format).upper()
+        quality = abs(int(queries.get("q", 100)))
         while quality > 0:
             with io.BytesIO() as output:
                 for frame in frames:
