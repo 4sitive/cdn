@@ -8,8 +8,8 @@
         },
         "request": {
           "method": "GET",
-          "querystring": "",
-          "uri": "/t+e+s+t/png/1.4mb.png",
+          "querystring": "q=-1",
+          "uri": "/t+e+s+t/png/8.5mb.png",
           "origin":{
             "s3":{
               "domainName": "cdn.4sitive.com.s3.amazonaws.com",

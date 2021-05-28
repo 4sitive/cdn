@@ -8,7 +8,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: lambda zip
         run: |
-          docker run --rm -v "$PWD/origin/response":/var/task lambci/lambda:build-python3.8 bash -c "pip install Pillow --upgrade --target . && zip -9yr lambda.zip ."
+          docker run --rm -v "$PWD/origin/response":/var/task lambci/lambda:build-python3.8 bash -c "pip install Pillow prettyprinter --upgrade --target . && zip -9yr lambda.zip ."
       - name: lambda update
         env:
           AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}

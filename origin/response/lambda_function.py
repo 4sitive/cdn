@@ -5,6 +5,8 @@ import mimetypes
 import os
 import re
 import urllib
+import pprint
+import json
 
 from PIL import Image, ImageSequence, ImageOps
 
@@ -23,7 +25,8 @@ def lambda_handler(event: dict, context) -> dict:
         return response
 
     queries = dict(urllib.parse.parse_qsl(request["querystring"]))
-    print("uri: {}, queries: {}, env: {}, cf: {}".format(uri, queries, os.environ, cf))
+    print("uri: {}, queries: {}, cf: {}".format(uri, json.dumps(queries), pprint.pformat(cf, depth=2)))
+    print(os.environ)
 
     try:
         object = s3.get_object(
@@ -46,7 +49,7 @@ def lambda_handler(event: dict, context) -> dict:
         frames = [frame.copy() for frame in ImageSequence.Iterator(image)]
         format = "WEBP" if queries.get("f", image.format).upper() == "PNG" else queries.get("f", image.format).upper()
         quality = abs(int(queries.get("q", 100)))
-        while quality > 0:
+        while True:
             with io.BytesIO() as output:
                 for frame in frames:
                     width = round(abs(int(queries.get("w", frame.width))) * (quality / 100 if format == "GIF" else 1))
@@ -57,21 +60,19 @@ def lambda_handler(event: dict, context) -> dict:
                                                                        format=format,
                                                                        quality=quality,
                                                                        save_all=format == "GIF" and len(frames) > 1,
-                                                                       subsampling=0,
                                                                        optimize=True,
                                                                        append_images=frames[1:])
                 if output.tell() >= 1048576 and quality > 0:
                     quality = quality - 10
                     continue
-                else:
-                    if output.tell() < 1048576:
-                        response["status"] = 200
-                        response["statusDescription"] = "OK"
-                        response["body"] = base64.standard_b64encode(output.getvalue()).decode()
-                        response["bodyEncoding"] = "base64"
-                        response["headers"]["content-type"] = [
-                            {"key": "Content-Type", "value": mimetypes.guess_type(format + "." + format)[0]}
-                        ]
+                if output.tell() < 1048576:
+                    response["status"] = 200
+                    response["statusDescription"] = "OK"
+                    response["body"] = base64.standard_b64encode(output.getvalue()).decode()
+                    response["bodyEncoding"] = "base64"
+                    response["headers"]["content-type"] = [
+                        {"key": "Content-Type", "value": mimetypes.guess_type(format + "." + format)[0]}
+                    ]
                 break
     except Exception as e:
         print(e)

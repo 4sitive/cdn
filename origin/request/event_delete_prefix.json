@@ -7,6 +7,7 @@
         },
         "request": {
           "method": "DELETE",
+          "querystring": "q=-1",
           "uri": "/5ebe2294ecd0e0f08eab7690d2a6ee69/test.txt",
           "headers": {
             "authorization": [

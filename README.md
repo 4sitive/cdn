@@ -4,12 +4,12 @@
 docker run --rm -v "$PWD":/var/task lambci/lambda:build-nodejs12.x npm install md5 jsonwebtoken uuid --prefix ./opt/nodejs
 cat origin/request/event_put.json | docker run --env-file .env --rm -v "$PWD/origin/request":/var/task:ro,delegated -v "$PWD/opt":/opt:ro,delegated -i -e DOCKER_LAMBDA_USE_STDIN=1 lambci/lambda:nodejs12.x index.handler
 cat origin/request/event_delete.json | docker run --env-file .env --rm -v "$PWD/origin/request":/var/task:ro,delegated -v "$PWD/opt":/opt:ro,delegated -i -e DOCKER_LAMBDA_USE_STDIN=1 lambci/lambda:nodejs12.x index.handler
-cat origin/request/event_sub_put.json | docker run --env-file .env --rm -v "$PWD/origin/request":/var/task:ro,delegated -v "$PWD/opt":/opt:ro,delegated -i -e DOCKER_LAMBDA_USE_STDIN=1 lambci/lambda:nodejs12.x index.handler
-cat origin/request/event_sub_delete.json | docker run --env-file .env --rm -v "$PWD/origin/request":/var/task:ro,delegated -v "$PWD/opt":/opt:ro,delegated -i -e DOCKER_LAMBDA_USE_STDIN=1 lambci/lambda:nodejs12.x index.handler
+cat origin/request/event_put_prefix.json | docker run --env-file .env --rm -v "$PWD/origin/request":/var/task:ro,delegated -v "$PWD/opt":/opt:ro,delegated -i -e DOCKER_LAMBDA_USE_STDIN=1 lambci/lambda:nodejs12.x index.handler
+cat origin/request/event_delete_prefix.json | docker run --env-file .env --rm -v "$PWD/origin/request":/var/task:ro,delegated -v "$PWD/opt":/opt:ro,delegated -i -e DOCKER_LAMBDA_USE_STDIN=1 lambci/lambda:nodejs12.x index.handler
 ```
 2. Origin response
 ```
-docker run --rm -v "$PWD":/var/task lambci/lambda:build-python3.8 pip install Pillow --upgrade --target ./opt/python
+docker run --rm -v "$PWD":/var/task lambci/lambda:build-python3.8 pip install Pillow prettyprinter --upgrade --target ./opt/python
 cat origin/response/event.json | docker run --env-file .env --rm -v "$PWD/origin/response":/var/task:ro,delegated -v "$PWD/opt":/opt:ro,delegated -i -e DOCKER_LAMBDA_USE_STDIN=1 lambci/lambda:python3.8 lambda_function.lambda_handler
 ```
 3.
