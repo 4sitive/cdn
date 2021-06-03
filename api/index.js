@@ -24,7 +24,8 @@ exports.handler = async (event) => {
             Bucket: process.env.AWS_S3_BUCKET,
             Key: key
         }).promise().then(() => true, err => {
-            if (err.statusCode !== 404) {
+            console.log(err)
+            if (err.statusCode !== 404 && err.code !== 'NotFound') {
                 throw err
             }
         })
