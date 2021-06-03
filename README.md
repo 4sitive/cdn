@@ -12,6 +12,18 @@ cat origin/request/event_delete_prefix.json | docker run --env-file .env --rm -v
 docker run --rm -v "$PWD":/var/task lambci/lambda:build-python3.8 pip install Pillow prettyprinter --upgrade --target ./opt/python
 cat origin/response/event.json | docker run --env-file .env --rm -v "$PWD/origin/response":/var/task:ro,delegated -v "$PWD/opt":/opt:ro,delegated -i -e DOCKER_LAMBDA_USE_STDIN=1 lambci/lambda:python3.8 lambda_function.lambda_handler
 ```
+3. API
+```
+cat api/event.json | docker run --env-file .env --rm -v "$PWD/api":/var/task:ro,delegated -v "$PWD/opt":/opt:ro,delegated -i -e DOCKER_LAMBDA_USE_STDIN=1 lambci/lambda:nodejs12.x index.handler
+```
+3. API Authorizer
+```
+docker run --rm -v "$PWD":/var/task lambci/lambda:build-python3.8 pip install Pillow prettyprinter --upgrade --target ./opt/python
+cat api/authorizer/event_put.json | docker run --env-file .env --rm -v "$PWD/api/authorizer":/var/task:ro,delegated -v "$PWD/opt":/opt:ro,delegated -i -e DOCKER_LAMBDA_USE_STDIN=1 lambci/lambda:nodejs12.x index.handler
+cat api/authorizer/event_put_prefix.json | docker run --env-file .env --rm -v "$PWD/api/authorizer":/var/task:ro,delegated -v "$PWD/opt":/opt:ro,delegated -i -e DOCKER_LAMBDA_USE_STDIN=1 lambci/lambda:nodejs12.x index.handler
+cat api/authorizer/event_delete.json | docker run --env-file .env --rm -v "$PWD/api/authorizer":/var/task:ro,delegated -v "$PWD/opt":/opt:ro,delegated -i -e DOCKER_LAMBDA_USE_STDIN=1 lambci/lambda:nodejs12.x index.handler
+cat api/authorizer/event_delete_prefix.json | docker run --env-file .env --rm -v "$PWD/api/authorizer":/var/task:ro,delegated -v "$PWD/opt":/opt:ro,delegated -i -e DOCKER_LAMBDA_USE_STDIN=1 lambci/lambda:nodejs12.x index.handler
+```
 3.
 ```
 docker run --rm -it -v "$PWD":/var/task lambci/lambda:build-python3.8 bash
@@ -22,15 +34,21 @@ docker run --rm -it -v "$PWD":/var/task lambci/lambda:build-nodejs12.x bash
 1. cdn.4sitive.com
 2. Bucket Versioning - Enable
 
+### API Gateway
+1. HTTP API
+2. Routes - ANY /api/{proxy+}
+3. Authorization - Lambda Auth
+4. Integrations - AWS Lambda
+
 ### CloudFront
-1. Origin Domain Name - cdn.4sitive.com.s3.amazonaws.com
+1. Origin Domain Name - cdn.4sitive.com.s3.amazonaws.com, {id}.execute-api.us-east-1.amazonaws.com
 2. Origin ID - S3-cdn.4sitive.com
 3. Origin Custom Headers - KEY
 3. Allowed HTTP Methods - GET, HEAD, OPTIONS, PUT, POST, PATCH, DELETE
 4. Cache Policy - Create a new policy (CachingOptimizedForQuery - Query strings[ALL])
 5. Alternate Domain Names(CNAMEs) - cdn.4sitive.com
 6. SSL Certificate - Custom SSL Certificate (Request or Import a Certificate with ACM)
-
+7. Behaviors - /api/*
 
 ### Identity and Access Management(IAM)
 1. Access management - Policies - Create policy

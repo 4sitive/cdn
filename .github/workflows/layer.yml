@@ -9,7 +9,7 @@ jobs:
       - name: layer zip
         run: |
           docker run --rm -v "$PWD":/var/task lambci/lambda:build-python3.8 pip install Pillow --upgrade --target ./opt/python
-          docker run --rm -v "$PWD":/var/task lambci/lambda:build-nodejs12.x npm install md5 jsonwebtoken --prefix ./opt/nodejs
+          docker run --rm -v "$PWD":/var/task lambci/lambda:build-nodejs12.x npm install md5 jsonwebtoken uuid --prefix ./opt/nodejs
           docker run --rm -v "$PWD/opt":/var/task lambci/lambda:build-provided zip -9yr layer.zip .
       - name: layer publish
         env:

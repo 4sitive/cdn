@@ -1,0 +1,12 @@
+{
+  "version": "2.0",
+  "type": "REQUEST",
+  "identitySource": [
+    "Bearer secret"
+  ],
+  "requestContext": {
+    "http": {
+      "method": "POST"
+    }
+  }
+}

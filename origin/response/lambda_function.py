@@ -25,7 +25,7 @@ def lambda_handler(event: dict, context) -> dict:
         return response
 
     queries = dict(urllib.parse.parse_qsl(request["querystring"]))
-    print("uri: {}, queries: {}, cf: {}".format(uri, json.dumps(queries), cf))
+    print(json.dumps(event))
     print(os.environ)
 
     try:

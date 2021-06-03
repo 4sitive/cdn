@@ -1,0 +1,12 @@
+{
+  "version": "2.0",
+  "type": "REQUEST",
+  "identitySource": [
+    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzZWNyZXQiLCJpYXQiOjE2MjIxODQ4MjJ9.zkwknpG2OuHU2VXnCcv5pvZe9elfqMxi9EgJQ0MhQiE"
+  ],
+  "requestContext": {
+    "http": {
+      "method": "POST"
+    }
+  }
+}

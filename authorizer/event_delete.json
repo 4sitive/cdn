@@ -1,0 +1,15 @@
+{
+  "version": "2.0",
+  "type": "REQUEST",
+  "identitySource": [
+    "Bearer secret"
+  ],
+  "requestContext": {
+    "http": {
+      "method": "DELETE"
+    }
+  },
+  "pathParameters": {
+    "proxy": "test.txt"
+  }
+}
