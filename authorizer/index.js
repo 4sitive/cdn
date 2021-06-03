@@ -13,7 +13,7 @@ exports.handler = async (event) => {
     }
     try {
         const [tokenType, tokenValue] = event.identitySource[0].split(' ')
-        if(tokenType.toLowerCase().startsWith('bearer')){
+        if (tokenType.toLowerCase().startsWith('bearer')) {
             let prefix = tokenValue === process.env.KEY ? '' : md5(jwt.verify(tokenValue, process.env.KEY).sub) + '/'
             response.isAuthorized = event.requestContext.http.method === 'DELETE' ? event.pathParameters.proxy.startsWith(prefix) : true
             response.context['prefix'] = prefix
