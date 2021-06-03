@@ -64,7 +64,7 @@ exports.handler = async (event) => {
     } catch (e) {
         console.log(e)
         response.statusCode = 500
-        response.body = JSON.stringify({'error': e.message})
+        response.body = JSON.stringify({'message': e.message})
     }
     return response;
 }
