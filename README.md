@@ -87,6 +87,8 @@ aws iam create-role --role-name ServiceRoleForLambda --assume-role-policy-docume
 ```
 ```
 aws iam attach-role-policy --role-name ServiceRoleForLambda --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+aws iam attach-role-policy --role-name ServiceRoleForLambda --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess
+aws iam attach-role-policy --role-name ServiceRoleForLambda --policy-arn arn:aws:iam::aws:policy/CloudFrontFullAccess
 ```
 
 ### AWS Lambda
