@@ -15,7 +15,7 @@ exports.handler = async (event) => {
     console.log(util.inspect(process.env, {breakLength: Infinity}))
     let response = {
         'statusCode': 404,
-        'headers': {},
+        'headers': {'Content-Type': 'application/json'},
         'body': '{}'
     }
 
