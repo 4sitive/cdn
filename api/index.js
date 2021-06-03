@@ -20,14 +20,11 @@ exports.handler = async (event) => {
     }
 
     try {
-        const exists = await S3.headObject({
+        const object = await S3.headObject({
             Bucket: process.env.AWS_S3_BUCKET,
             Key: key
-        }).promise().then(() => true, err => {
-            console.log(err)
-            if (err.statusCode !== 404 && err.code !== 'NotFound') {
-                throw err
-            }
+        }).promise().catch(err => {
+            if (err.statusCode !== 404 && err.code !== 'NotFound') throw err
         })
         switch (event.requestContext.http.method) {
             case 'PUT':
@@ -38,7 +35,7 @@ exports.handler = async (event) => {
                     Body: Buffer.from(event.body, 'base64'),
                     ContentType: event.headers['content-type']
                 }).promise())
-                response.statusCode = 200
+                response.statusCode = object ? 200 : 201
                 response.headers['Content-Location'] = '/' + key
                 break;
             case 'DELETE':
@@ -50,7 +47,7 @@ exports.handler = async (event) => {
                 break;
             default:
         }
-        if ((response.statusCode / 100 === 2) && exists) {
+        if ((response.statusCode / 100 === 2) && object) {
             console.log(await CloudFront.createInvalidation({
                 DistributionId: process.env.AWS_CLOUDFRONT_DISTRIBUTION_ID,
                 InvalidationBatch: {
